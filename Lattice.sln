@@ -1,0 +1,40 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31019.35
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LatticeCapture", "src\LatticeCapture\LatticeCapture.vcxproj", "{2C1F2D6B-6A14-4A3D-9C2F-1F7B62A8E101}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LatticeHub", "src\LatticeHub\LatticeHub.csproj", "{4D6E73AA-7F3C-4D52-A0E1-C8B3DD49F202}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LatticeReplay", "src\LatticeReplay\LatticeReplay.csproj", "{7E2A1BFE-4DCE-4F1A-B3D9-2A5E8C4F7303}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LatticeAlign", "src\LatticeAlign\LatticeAlign.vcxproj", "{0F5B7CAA-3D11-4EAF-9E25-7B14C6A2E404}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2C1F2D6B-6A14-4A3D-9C2F-1F7B62A8E101}.Debug|x64.ActiveCfg = Debug|x64
+		{2C1F2D6B-6A14-4A3D-9C2F-1F7B62A8E101}.Debug|x64.Build.0 = Debug|x64
+		{2C1F2D6B-6A14-4A3D-9C2F-1F7B62A8E101}.Release|x64.ActiveCfg = Release|x64
+		{2C1F2D6B-6A14-4A3D-9C2F-1F7B62A8E101}.Release|x64.Build.0 = Release|x64
+		{4D6E73AA-7F3C-4D52-A0E1-C8B3DD49F202}.Debug|x64.ActiveCfg = Debug|x64
+		{4D6E73AA-7F3C-4D52-A0E1-C8B3DD49F202}.Debug|x64.Build.0 = Debug|x64
+		{4D6E73AA-7F3C-4D52-A0E1-C8B3DD49F202}.Release|x64.ActiveCfg = Release|x64
+		{4D6E73AA-7F3C-4D52-A0E1-C8B3DD49F202}.Release|x64.Build.0 = Release|x64
+		{7E2A1BFE-4DCE-4F1A-B3D9-2A5E8C4F7303}.Debug|x64.ActiveCfg = Debug|x64
+		{7E2A1BFE-4DCE-4F1A-B3D9-2A5E8C4F7303}.Debug|x64.Build.0 = Debug|x64
+		{7E2A1BFE-4DCE-4F1A-B3D9-2A5E8C4F7303}.Release|x64.ActiveCfg = Release|x64
+		{7E2A1BFE-4DCE-4F1A-B3D9-2A5E8C4F7303}.Release|x64.Build.0 = Release|x64
+		{0F5B7CAA-3D11-4EAF-9E25-7B14C6A2E404}.Debug|x64.ActiveCfg = Debug|x64
+		{0F5B7CAA-3D11-4EAF-9E25-7B14C6A2E404}.Debug|x64.Build.0 = Debug|x64
+		{0F5B7CAA-3D11-4EAF-9E25-7B14C6A2E404}.Release|x64.ActiveCfg = Release|x64
+		{0F5B7CAA-3D11-4EAF-9E25-7B14C6A2E404}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
