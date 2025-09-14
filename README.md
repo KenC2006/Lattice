@@ -1,69 +1,53 @@
-# Lattice — Hack the North 2025 Finalist Winner  
+# Lattice – Hack the North 2025 Finalist Winner
 
-**🏆 Awards:**  
-- **Best Overall**  
-- **YC Unicorn Prize Interview Selection**
+Turn a space into a live hologram. 3 Xbox Kinects capture an area from
+different angles. Lattice fuses their point clouds into one 3D scene in real
+time, and a HoloLens drops that scene in front of you as a hologram you can
+interact with.
 
-**Event:** Hack the North 2025  
-**Date:** September 2025  
+Won Best Overall and the YC Unicorn Prize demo selection.
+[Devpost](https://devpost.com/software/lattice-flck7q)
 
-## Overview  
+<img width="500" alt="devpost" src="https://github.com/user-attachments/assets/f77bbfb7-ae00-497c-a7b6-21a34b96ac7c" />
 
-**Lattice** is a **real-time holographic projection framework** that captures 3D volumetric data using **Xbox Kinect depth cameras** and renders fully aligned, live 3D reconstructions for **HoloLens** telepresence visualization.  
+## Layout
 
-The system enables users to experience immersive holographic presence — turning multi-view depth captures into coherent, real-world 3D scenes streamed instantly between physical and mixed-reality environments.
+The code is split into four main sections
 
-## Technical Architecture  
+- **LatticeCapture** (C++) is the capture client, one per machine with a
+  Kinect v2. It reads depth and color off the sensor, turns each frame into a
+  colored point cloud, and talks to the hub over TCP.
+- **LatticeHub** (C#) is the server. It takes frames from every connected
+  client, merges them into one scene, and renders it in an OpenGL viewport.
+  The merged cloud also gets rebroadcast on a second port so other viewers can
+  subscribe to it.
+- **LatticeAlign** (C++) is a small ICP library the hub calls into to refine
+  the alignment between sensors.
+- **LatticeReplay** (C#) is a standalone viewer for saved captures.
 
-### 1. Multi-Sensor RGB-D Capture  
-Lattice utilizes **three Xbox Kinect v2 cameras**, each calibrated with intrinsic parameters for accurate RGB-D mapping. The cameras capture synchronized frames containing both **depth (D)** and **color (RGB)** data streams.  
-- Each frame is converted into a **point cloud** via per-pixel projection using the camera’s internal pinhole model:
-P = K^-1 * [u, v, 1]^T * D(u,v)
-where `K` is the intrinsic matrix, and `D(u,v)` is the depth value.  
-- The corresponding color value is assigned per point for photorealistic rendering.
+## How it works
 
-### 2. Real-Time Network Streaming  
-Captured point clouds are serialized and **streamed asynchronously to a central server** using WebSocket connections.  
-- Each packet includes: timestamp, camera ID, RGB-D data, and transformation metadata.  
-- A custom binary protocol minimizes overhead and preserves spatial fidelity.
+Each client uses the Kinect SDK to map its color frame into 3D, throws away
+points that are too close, too far, or outside the capture bounds, and keeps
+the rest as a colored point cloud.
 
-### 3. Calibration and Point Cloud Fusion  
-The server performs **multi-sensor spatial calibration** using:  
-- **Iterative Closest Point (ICP)** to compute rigid body transformations aligning each camera’s frame to a common global coordinate system.  
-- **Convex hull enclosure** to maintain consistent spatial boundaries and prevent ghosting between overlapping clouds.  
+Calibration uses printed markers. Each client finds
+the marker in its color image with OpenCV, works out where the marker sits
+relative to the sensor, and from that gets a transform into a shared world
+space. Since every sensor sees the same physical marker, all the clouds land
+in the same coordinate system. The pose is cached on disk so restarts skip
+recalibration.
 
-Real-time transforms are applied to every incoming point cloud frame to ensure geometric alignment across views.
+Marker calibration only gets the clouds roughly aligned, so the hub runs ICP
+on top to tighten it up, aligning every sensor onto the first one that
+connected.
 
-### 4. Temporal Synchronization and Filtering  
-To maintain smooth motion capture and reduce jitter:  
-- Frames are **timestamp-synchronized** within ±5 ms tolerance.  
-- Overlapping regions are merged through **spatial averaging and bilateral filtering**, removing sensor noise while preserving edges.
+Everything on the wire is a compact binary protocol over TCP. The hub sends
+commands (grab a frame, calibrate, apply settings) and the clients send frames
+and acks back.
 
-### 5. Holographic Visualization  
-The final unified 3D scene is transmitted to the **HoloLens client**, where the user can view the live reconstructed hologram in full 3D space.  
-- Rendering uses **Unity3D** with GPU-accelerated shaders for point-based rendering.  
-- The framework supports both **local rendering** and **remote streaming** modes for telepresence applications.
-
-## Tech Stack  
-
-| Component | Technology |
-|------------|-------------|
-| **Capture** | Xbox Kinect SDK, OpenCV, C++ |
-| **Networking** | WebSocket (Boost Asio), Protobuf serialization |
-| **Server Fusion** | C++, PCL (Point Cloud Library), Eigen |
-| **Visualization** | Unity3D, HoloLens SDK, C# |
-| **Infrastructure** | UDP transport layer, asynchronous threading, timestamp synchronization |
-
-## Key Features  
-- Multi-Kinect RGB-D fusion with real-time calibration  
-- Low-latency network streaming with timestamp alignment  
-- Robust 3D point cloud merging using ICP  
-- Live holographic rendering on Microsoft HoloLens  
-
-## Devpost  
-<img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/f77bbfb7-ae00-497c-a7b6-21a34b96ac7c" />
-
-*[Devpost link](https://devpost.com/software/lattice-flck7q)*  
-
-
-
+The fused scene gets rebroadcast on a second port, and anything on the network
+can subscribe to that feed. That's how the AR side works: the HoloLens viewer
+we demoed is a separate Unity app that connects to the broadcast port and
+renders the cloud as a hologram in front of you. That app lives in its own
+repo, this one is the capture and fusion side.
